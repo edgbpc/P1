@@ -17,12 +17,12 @@
 
 using namespace std;
 
-string operators = "+-*/%<>=";
-string lowerCase = "abcdefghijklmnopqrstuvwxyz";
-string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-string reservedWords[] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};
-string delimiters = ":.();{}[]";
-string digits = "1234567890";
+const string operators = "+-*/%<>=";
+const string lowerCase = "abcdefghijklmnopqrstuvwxyz";
+const string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const string reservedWords[] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};
+const string delimiters = ":.();{}[]";
+const string digits = "1234567890";
 
 token_t tokenPartial;
 token_t tokenComplete;
@@ -30,8 +30,6 @@ token_t tokenNext;
 
 
 token_t checkCharacter(char c, int lineNumber){
-    
-    
     if (lowerCase.find(c)){
         tokenPartial.tokenInstance = tokenPartial.tokenInstance + c;
         tokenPartial.tokenID = identiferToken;
