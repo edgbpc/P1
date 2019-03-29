@@ -17,15 +17,12 @@
 
 using namespace std;
 
-char delimiters[] = {':' , '.' , ';', '(' , ')' , '{', '}' , '[' , ']'};
-char operators[] = {'+', '-', '*', '/', '%', '<', '>', '=' };
-char lowerCase[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm' , 'n', 'o' , 'p','q', 'r', 's' , 't' , 'u', 'v', 'w', 'x', 'y', 'z' };
-char upperCase[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G' , 'H', 'I' , 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-
-
+string operators = "+-*/%<>=";
+string lowerCase = "abcdefghijklmnopqrstuvwxyz";
+string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 string reservedWords[] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};
-
-
+string delimiters = ":.();{}[]";
+string digits = "1234567890";
 
 token_t tokenPartial;
 token_t tokenComplete;
@@ -34,34 +31,35 @@ token_t tokenNext;
 
 token_t checkCharacter(char c, int lineNumber){
     
-    if (find(begin(lowerCase), end(lowerCase), c)){
+    
+    if (lowerCase.find(c)){
         tokenPartial.tokenInstance = tokenPartial.tokenInstance + c;
         tokenPartial.tokenID = identiferToken;
     }
-    else if (find(begin(upperCase), end(upperCase), c)){
+    else if (upperCase.find(c)){
         if (tokenPartial.tokenInstance.length() == 0){
         // error
         } else {
             tokenPartial.tokenInstance = tokenPartial.tokenInstance + c;
         }
     }
-    else if (isdigit(c)){
+    else if (digits.find(c)){
         if (tokenPartial.tokenInstance.length() == 0){
             tokenPartial.tokenID = digitToken;
         }
         tokenPartial.tokenInstance = tokenPartial.tokenInstance + c;
-        
+
     }
     else if (c == '&') {
         //ignore until nl
     }
-    else if (find(begin(delimiters), end(delimiters), c)) {
+    else if (delimiters.find(c)) {
         if (tokenPartial.tokenInstance.length() == 0){
             tokenPartial.tokenID = delimiterToken;
         }
         tokenPartial.tokenInstance = tokenPartial.tokenInstance + c;
     }
-    else if (find(begin(operators), end(operators), c )) {
+    else if (operators.find(c)) {
         if (tokenPartial.tokenInstance.length() == 0){
             tokenPartial.tokenID = operatorToken;
         }
@@ -89,12 +87,14 @@ token_t filter1(char c, int lineNumber){
 }
 
 bool filter2(token_t token){
-    if (find(begin(reservedWords), end(reservedWords), token)) {
+    if (1){
         return true;
     } else {
         return false;
     }
-    
+
+
+
 }
 
 

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C3B2E6A0224DADCA0019671E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B2E69F224DADCA0019671E /* main.cpp */; };
+		C3B2E6A9224DAEF20019671E /* scanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B2E6A7224DAEF20019671E /* scanner.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,9 @@
 /* Begin PBXFileReference section */
 		C3B2E69C224DADCA0019671E /* P1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = P1; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B2E69F224DADCA0019671E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		C3B2E6A6224DAE2A0019671E /* token.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = token.h; sourceTree = "<group>"; };
+		C3B2E6A7224DAEF20019671E /* scanner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = scanner.cpp; sourceTree = "<group>"; };
+		C3B2E6A8224DAEF20019671E /* scanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scanner.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +62,9 @@
 			isa = PBXGroup;
 			children = (
 				C3B2E69F224DADCA0019671E /* main.cpp */,
+				C3B2E6A6224DAE2A0019671E /* token.h */,
+				C3B2E6A7224DAEF20019671E /* scanner.cpp */,
+				C3B2E6A8224DAEF20019671E /* scanner.h */,
 			);
 			path = P1;
 			sourceTree = "<group>";
@@ -118,6 +125,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3B2E6A9224DAEF20019671E /* scanner.cpp in Sources */,
 				C3B2E6A0224DADCA0019671E /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
