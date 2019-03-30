@@ -73,7 +73,7 @@ partialToken_t tokenFragment;
 int stateIndex = 0; //start at index 0/state 1
 
 token_t checkCharacter(partialToken_t tokenFragment){
-        if (lowerCase.find(tokenFragment.characterToCheck)){
+    if (lowerCase.find(tokenFragment.characterToCheck) != string::npos){
         if (stateTable[stateIndex][1] != error){
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
@@ -88,7 +88,7 @@ token_t checkCharacter(partialToken_t tokenFragment){
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
         }
     }
-    else if (upperCase.find(tokenFragment.characterToCheck)){
+    else if (upperCase.find(tokenFragment.characterToCheck != string::npos)){
         if (stateTable[stateIndex][0] != error){
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
@@ -103,7 +103,7 @@ token_t checkCharacter(partialToken_t tokenFragment){
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
         }
     }
-    else if (digits.find(tokenFragment.characterToCheck)){
+    else if (digits.find(tokenFragment.characterToCheck != string::npos)){
         if (stateTable[stateIndex][2] != error){
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
@@ -119,15 +119,16 @@ token_t checkCharacter(partialToken_t tokenFragment){
         }
     }
     //TODO - fix next state algorithm for delimiters/operators
-    else if (delimiters.find(tokenFragment.characterToCheck)) {
-        if (stateTable[stateIndex][6] || stateTable[stateIndex][12] || stateTable[stateIndex][13] || stateTable[stateIndex][15] || stateTable[stateIndex][16] || stateTable[stateIndex][17] || stateTable[stateIndex][18] || stateTable[stateIndex][19] || stateTable[stateIndex][20] != error) {
+    else if (delimiters.find(tokenFragment.characterToCheck != string::npos)) {
+        int delimiterIndex = int(delimiters.find(tokenFragment.characterToCheck));
+        if (stateTable[stateIndex][delimiterIndex]  != error) {
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = stateTable[stateIndex][1];
+            stateIndex = stateTable[stateIndex][delimiterIndex - 1];
         } else {
             //error
         }
-        if (stateTable[stateIndex][6] || stateTable[stateIndex][12] || stateTable[stateIndex][13] || stateTable[stateIndex][15] || stateTable[stateIndex][16] || stateTable[stateIndex][17] || stateTable[stateIndex][18] || stateTable[stateIndex][19] || stateTable[stateIndex][20] == 1003) {
+        if (stateTable[stateIndex][delimiterIndex]  == 1003) {
             tokenCurrent.tokenID = identifierToken;
             // need to retain the character that was being processed when the state is in a complete state
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
@@ -135,14 +136,15 @@ token_t checkCharacter(partialToken_t tokenFragment){
         }
     }
     else if (operators.find(tokenFragment.characterToCheck)) {
-        if (stateTable[stateIndex][7] || stateTable[stateIndex][8] || stateTable[stateIndex][9] | stateTable[stateIndex][10] || stateTable[stateIndex][11] != error) {
+        int operatorIndex = int(operators.find(tokenNextFragment.characterToCheck));
+        if (stateTable[stateIndex][operatorIndex] != error) {
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = stateTable[stateIndex][1];
+            stateIndex = stateTable[stateIndex][operatorIndex - 1];
         } else {
             //error
         }
-        if (stateTable[stateIndex][7] || stateTable[stateIndex][8] || stateTable[stateIndex][9] | stateTable[stateIndex][10] || stateTable[stateIndex][11] == 1002) {
+        if (stateTable[stateIndex][operatorIndex] == 1002) {
             tokenCurrent.tokenID = identifierToken;
             // need to retain the character that was being processed when the state is in a complete state
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
@@ -170,10 +172,6 @@ void sendtoScanner(partialToken_t tokenFragment){
         // invoke scanner
     }
 }
-
-
-
-
 
 partialToken_t filter1(char workingCharacter, int lineNumber){
     // filter found a line starting with a comment
