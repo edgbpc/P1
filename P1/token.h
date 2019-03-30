@@ -14,14 +14,21 @@
 using namespace std;
 
 enum tokenID_t{
-    identiferToken, digitToken, delimiterToken, operatorToken, EOFToken, reservedWordToken
+    identiferToken, digitToken, delimiterToken, operatorToken, EOFToken, reservedWordToken, comment
+};
+
+enum tokenState{
+    partial, complete
 };
 
 struct token_t {
     tokenID_t tokenID;
     string tokenInstance;
     int lineNumber;
+    tokenState state = partial;
 };
+
+
 
 
 
