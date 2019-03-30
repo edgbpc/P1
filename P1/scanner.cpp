@@ -135,7 +135,7 @@ token_t checkCharacter(partialToken_t tokenFragment){
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
         }
     }
-    else if (operators.find(tokenFragment.characterToCheck)) {
+    else if (operators.find(tokenFragment.characterToCheck != string::npos)) {
         int operatorIndex = int(operators.find(tokenNextFragment.characterToCheck));
         if (stateTable[stateIndex][operatorIndex] != error) {
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
