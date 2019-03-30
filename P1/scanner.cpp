@@ -112,7 +112,7 @@ token_t checkCharacter(partialToken_t tokenFragment){
             //error
         }
         if (stateTable[stateIndex][1] == 1001){
-            tokenCurrent.tokenID = identifierToken;
+            tokenCurrent.tokenID = digitToken;
             // need to retain the character that was being processed when the state is in a complete state
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
@@ -129,7 +129,7 @@ token_t checkCharacter(partialToken_t tokenFragment){
             //error
         }
         if (stateTable[stateIndex][delimiterIndex]  == 1003) {
-            tokenCurrent.tokenID = identifierToken;
+            tokenCurrent.tokenID = delimiterToken;
             // need to retain the character that was being processed when the state is in a complete state
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
@@ -145,7 +145,7 @@ token_t checkCharacter(partialToken_t tokenFragment){
             //error
         }
         if (stateTable[stateIndex][operatorIndex] == 1002) {
-            tokenCurrent.tokenID = identifierToken;
+            tokenCurrent.tokenID = operatorToken;
             // need to retain the character that was being processed when the state is in a complete state
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
@@ -162,7 +162,6 @@ token_t checkCharacter(partialToken_t tokenFragment){
     }
     
  //   tokenCurrent.lineNumber = lineNumber;
-    
     
     return tokenCurrent;
 }
