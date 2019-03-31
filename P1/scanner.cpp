@@ -23,6 +23,8 @@ const string operatorss = "+-*/%<>=";
 const string reservedWords[] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};//
 const string delimiters = ":.();{}[] ";
 //const string digits = "1234567890";
+string tokenTypes[] { "identifierToken", "digitToken", "delimiterToken", "operatorToken", "EOFToken" };
+
 
 
 // columns (valid characters)  as follows:
@@ -73,8 +75,19 @@ partialToken_t tokenFragment;
 int stateIndex = 0; //start at index 0/state 1
 int previousStateIndex;
 
-void checkCharacter(partialToken_t tokenFragment){
+void checkCharacter(partialToken_t token){
+  
    // int index = lowerCase.find(tokenFragment.characterToCheck);
+    
+    //check if we have a character still needing processed
+    //copy data from tokenNextFragment to tokenFragment so rest of logic can execute the same
+    if (tokenNextFragment.needToProcess == true){
+        tokenFragment.characterToCheck = tokenNextFragment.characterToCheck;
+        tokenFragment.lineNumberCharacterOn = tokenNextFragment.lineNumberCharacterOn;
+        tokenFragment.charType = tokenNextFragment.charType;
+        tokenNextFragment.needToProcess = false;
+            }
+    
     
     if (tokenFragment.charType == lower){
         if (stateTable[stateIndex][1] != error){
@@ -134,7 +147,6 @@ void checkCharacter(partialToken_t tokenFragment){
         }
         if (stateTable[stateIndex][delimiterIndex]  >= 1000) {
             determineTokenType(stateIndex);
-            tokenCurrent.tokenID = delimiterToken;
             // need to retain the character that was being processed when the state is in a complete state
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
@@ -151,13 +163,22 @@ void checkCharacter(partialToken_t tokenFragment){
         }
         if (stateIndex >= 1000) {
             determineTokenType(stateIndex);
-            tokenCurrent.tokenID = operatorToken;
                 // need to retain the character that was being processed when the state is in a complete state
+                // restore the tokenInstance before the endd
             tokenCurrent.tokenInstance.pop_back();
+            
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
+            tokenNextFragment.charType = tokenFragment.charType;
+            tokenNextFragment.needToProcess = true;
+            // since we have a finished token, next time a character is checked, its the start of a new token
+            stateIndex = 0;
             
-            
+            //send back into checkCharacter
+            printToken();
+            clearTokenCurrent();
+            checkCharacter(tokenNextFragment);
+            // we found a token, clear out tokenCurrent for next run
         }
     }
     else if (tokenFragment.characterToCheck == EOF){
@@ -166,12 +187,26 @@ void checkCharacter(partialToken_t tokenFragment){
         tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
 
     }
+    
+    else if (tokenFragment.characterToCheck == newLine){
+        
+    }
+    
     else {
         //error
     }
     
- //   tokenCurrent.lineNumber = lineNumber;
    
+}
+
+void clearTokenCurrent(){
+    tokenCurrent.tokenInstance = '\0';
+    tokenCurrent.lineNumber = 0;
+    tokenCurrent.tokenInstance = "";
+}
+
+void printToken(){
+    cout << "[ " << tokenTypes[tokenCurrent.tokenID] << "|" << tokenCurrent.tokenInstance << "|" << tokenCurrent.lineNumber << " ]" << endl;
 }
 
 void determineTokenType(int stateIndex){
@@ -194,7 +229,7 @@ void determineTokenType(int stateIndex){
 }
 
 
-void scanner(partialToken_t tokenFragment){
+void scanner(partialToken_t token){
     cout << tokenFragment.characterToCheck << '\t' << tokenFragment.lineNumberCharacterOn << endl;
     checkCharacter(tokenFragment);
     
@@ -236,9 +271,17 @@ void filter1(char workingCharacter, int lineNumber){
         if (workingCharacter == EOF){
             tokenFragment.charType = eof;
         }
+        
         scanner(tokenFragment);
         
     }
+    
+}
+
+void markTokenNextFragmentAsStale(){
+    //we are done holding on to this information
+
+    
     
 }
 
