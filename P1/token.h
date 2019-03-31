@@ -17,6 +17,10 @@ enum tokenID_t{
     identifierToken, digitToken, delimiterToken, operatorToken, EOFToken, reservedWordToken, comment
 };
 
+enum charTypes{
+    lower, upper, digit, delimiter, operators, newLine, eof
+};
+
 struct token_t {
     tokenID_t tokenID;
     string tokenInstance;
@@ -28,6 +32,7 @@ struct partialToken_t{
     int lineNumberCharacterOn;
     bool isPartOfComment;
     bool fragmentCompleted;
+    charTypes charType;
     
 };
 

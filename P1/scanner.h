@@ -12,10 +12,11 @@
 #include <stdio.h>
 #include "token.h"
 
-token_t checkCharacter(partialToken_t tokenFragment);
+void checkCharacter(partialToken_t tokenFragment);
 void scanner(partialToken_t tokenFragment);
 void filter1(char workingCharacter, int lineNumber);
 bool filter2(token_t token);
+void determineTokenType(int stateIndex);
 
 
 

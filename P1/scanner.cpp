@@ -17,12 +17,12 @@
 
 using namespace std;
 
-const string operators = "+-*/%<>=";
-const string lowerCase = "abcdefghijklmnopqrstuvwxyz";
-const string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const string reservedWords[] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};
+const string operatorss = "+-*/%<>=";
+//const string lowerCase = "abcdefghijklmnopqrstuvwxyz";
+//const string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const string reservedWords[] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};//
 const string delimiters = ":.();{}[] ";
-const string digits = "1234567890";
+//const string digits = "1234567890";
 
 
 // columns (valid characters)  as follows:
@@ -71,13 +71,16 @@ partialToken_t tokenNextFragment;
 partialToken_t tokenFragment;
 
 int stateIndex = 0; //start at index 0/state 1
+int previousStateIndex;
 
-token_t checkCharacter(partialToken_t tokenFragment){
-    if (lowerCase.find(tokenFragment.characterToCheck) != string::npos){
+void checkCharacter(partialToken_t tokenFragment){
+   // int index = lowerCase.find(tokenFragment.characterToCheck);
+    
+    if (tokenFragment.charType == lower){
         if (stateTable[stateIndex][1] != error){
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
+            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = stateTable[stateIndex][1-1];
+            stateIndex = (stateTable[stateIndex][1] - 1);
         } else {
             //error
         }
@@ -88,30 +91,30 @@ token_t checkCharacter(partialToken_t tokenFragment){
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
         }
     }
-    else if (upperCase.find(tokenFragment.characterToCheck != string::npos)){
+    else if (tokenFragment.charType == upper){
         if (stateTable[stateIndex][0] != error){
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
+            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
             stateIndex = stateTable[stateIndex][0];
         } else {
             //error
         }
-        if (stateTable[stateIndex][1] == 1000){
+        if (stateTable[stateIndex][0] == 1000){
             tokenCurrent.tokenID = identifierToken;
             // need to retain the character that was being processed when the state is in a complete state
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
         }
     }
-    else if (digits.find(tokenFragment.characterToCheck != string::npos)){
+    else if (tokenFragment.charType == digit){
         if (stateTable[stateIndex][2] != error){
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
+            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
             stateIndex = stateTable[stateIndex][2-1];
         } else {
             //error
         }
-        if (stateTable[stateIndex][1] == 1001){
+        if (stateTable[stateIndex][2] == 1001){
             tokenCurrent.tokenID = digitToken;
             // need to retain the character that was being processed when the state is in a complete state
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
@@ -119,36 +122,42 @@ token_t checkCharacter(partialToken_t tokenFragment){
         }
     }
     //TODO - fix next state algorithm for delimiters/operators
-    else if (delimiters.find(tokenFragment.characterToCheck != string::npos)) {
+    else if (tokenFragment.charType == delimiter) {
         int delimiterIndex = int(delimiters.find(tokenFragment.characterToCheck));
         if (stateTable[stateIndex][delimiterIndex]  != error) {
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
+            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
+            previousStateIndex = stateIndex;
             stateIndex = stateTable[stateIndex][delimiterIndex - 1];
         } else {
             //error
         }
-        if (stateTable[stateIndex][delimiterIndex]  == 1003) {
+        if (stateTable[stateIndex][delimiterIndex]  >= 1000) {
+            determineTokenType(stateIndex);
             tokenCurrent.tokenID = delimiterToken;
             // need to retain the character that was being processed when the state is in a complete state
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
         }
     }
-    else if (operators.find(tokenFragment.characterToCheck != string::npos)) {
-        int operatorIndex = int(operators.find(tokenNextFragment.characterToCheck));
+    else if (tokenFragment.charType == operators) {
+        int operatorIndex = int(operatorss.find(tokenFragment.characterToCheck));
         if (stateTable[stateIndex][operatorIndex] != error) {
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance = tokenFragment.characterToCheck;
+            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
             stateIndex = stateTable[stateIndex][operatorIndex - 1];
         } else {
             //error
         }
-        if (stateTable[stateIndex][operatorIndex] == 1002) {
+        if (stateIndex >= 1000) {
+            determineTokenType(stateIndex);
             tokenCurrent.tokenID = operatorToken;
-            // need to retain the character that was being processed when the state is in a complete state
+                // need to retain the character that was being processed when the state is in a complete state
+            tokenCurrent.tokenInstance.pop_back();
             tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
             tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
+            
+            
         }
     }
     else if (tokenFragment.characterToCheck == EOF){
@@ -162,13 +171,32 @@ token_t checkCharacter(partialToken_t tokenFragment){
     }
     
  //   tokenCurrent.lineNumber = lineNumber;
-    
-    return tokenCurrent;
+   
 }
 
+void determineTokenType(int stateIndex){
+    switch (stateIndex){
+        case 1000:
+            tokenCurrent.tokenID = identifierToken;
+            break;
+        case 1001:
+            tokenCurrent.tokenID = digitToken;
+            break;
+        case 1002:
+            tokenCurrent.tokenID = operatorToken;
+            break;
+        case 1003:
+            tokenCurrent.tokenID = delimiterToken;
+            break;
+        default:
+            break;
+    }
+}
+
+
 void scanner(partialToken_t tokenFragment){
-    cout << tokenFragment.characterToCheck << endl;
-    cout << tokenFragment.lineNumberCharacterOn << endl;
+    cout << tokenFragment.characterToCheck << '\t' << tokenFragment.lineNumberCharacterOn << endl;
+    checkCharacter(tokenFragment);
     
 }
 
@@ -187,7 +215,29 @@ void filter1(char workingCharacter, int lineNumber){
     } else {
         tokenFragment.characterToCheck = workingCharacter;
         tokenFragment.lineNumberCharacterOn = lineNumber;
+        if (islower(workingCharacter)){
+            tokenFragment.charType = lower;
+        }
+        if (isupper(workingCharacter)){
+            tokenFragment.charType = upper;
+        }
+        if (isdigit(workingCharacter)){
+            tokenFragment.charType = digit;
+        }
+        if (workingCharacter == '+' || workingCharacter == '-' || workingCharacter == '/' || workingCharacter == '*' || workingCharacter == '%' || workingCharacter == '=' || workingCharacter == '>' || workingCharacter == '<'){
+            tokenFragment.charType = operators;
+        }
+        if (workingCharacter == ':' || workingCharacter == '.' || workingCharacter == '(' || workingCharacter == ')' || workingCharacter == ';' || workingCharacter == '{' || workingCharacter == '}' || workingCharacter == ',' || workingCharacter == '[' || workingCharacter == ']'){
+            tokenFragment.charType = delimiter;
+        }
+        if (workingCharacter == '\n'){
+            tokenFragment.charType = newLine;
+        }
+        if (workingCharacter == EOF){
+            tokenFragment.charType = eof;
+        }
         scanner(tokenFragment);
+        
     }
     
 }
