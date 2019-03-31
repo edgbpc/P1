@@ -19,6 +19,7 @@ bool filter2(token_t token);
 void determineTokenType(int stateIndex);
 void printToken();
 void clearTokenCurrent();
+void processFinalTokenState();
 
 
 

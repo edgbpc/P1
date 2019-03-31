@@ -19,7 +19,7 @@ enum tokenID_t{
 
 
 enum charTypes{
-    lower, upper, digit, delimiter, operators, newLine, eof
+    lower, upper, digit, delimiter, operators, whitespace, eof
 };
 
 struct token_t {

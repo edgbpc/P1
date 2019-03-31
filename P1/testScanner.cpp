@@ -26,6 +26,7 @@ void testScanner::runTestScanner(ifstream  & fileToRead){
  
     // if \n encountered, increment lineNumber
     while (fileToRead.get(character)){
+
         if (character == '\n') {
             lineNumber++;
         }

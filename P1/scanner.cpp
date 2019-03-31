@@ -71,6 +71,7 @@ bool newToken = false;
 token_t tokenCurrent;
 partialToken_t tokenNextFragment;
 partialToken_t tokenFragment;
+int tokenState;
 
 int stateIndex = 0; //start at index 0/state 1
 int previousStateIndex;
@@ -86,52 +87,45 @@ void checkCharacter(partialToken_t token){
         tokenFragment.lineNumberCharacterOn = tokenNextFragment.lineNumberCharacterOn;
         tokenFragment.charType = tokenNextFragment.charType;
         tokenNextFragment.needToProcess = false;
-            }
-    
-    
+    }
+
     if (tokenFragment.charType == lower){
         if (stateTable[stateIndex][1] != error){
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = (stateTable[stateIndex][1] - 1);
+            stateIndex = (stateTable[stateIndex][1]);
         } else {
             //error
         }
-        if (stateTable[stateIndex][1] == 1000){
-            tokenCurrent.tokenID = identifierToken;
-            // need to retain the character that was being processed when the state is in a complete state
-            tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
-            tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
+        if (stateIndex >= 1000){
+            processFinalTokenState();
+            checkCharacter(tokenNextFragment);
         }
     }
     else if (tokenFragment.charType == upper){
         if (stateTable[stateIndex][0] != error){
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = stateTable[stateIndex][0];
+            stateIndex = (stateTable[stateIndex][0]);
         } else {
             //error
         }
-        if (stateTable[stateIndex][0] == 1000){
-            tokenCurrent.tokenID = identifierToken;
-            // need to retain the character that was being processed when the state is in a complete state
-            tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
-            tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
+        if (stateIndex >= 1000){
+            processFinalTokenState();
+            checkCharacter(tokenNextFragment);
         }
     }
     else if (tokenFragment.charType == digit){
         if (stateTable[stateIndex][2] != error){
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = stateTable[stateIndex][2-1];
+            stateIndex = (stateTable[stateIndex][2-1]);
         } else {
             //error
         }
-        if (stateTable[stateIndex][2] == 1001){
-            tokenCurrent.tokenID = digitToken;
-            // need to retain the character that was being processed when the state is in a complete state
-            tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
-            tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
+        if (stateIndex >= 1000){
+            processFinalTokenState();
+            checkCharacter(tokenNextFragment);
         }
     }
     //TODO - fix next state algorithm for delimiters/operators
@@ -145,11 +139,9 @@ void checkCharacter(partialToken_t token){
         } else {
             //error
         }
-        if (stateTable[stateIndex][delimiterIndex]  >= 1000) {
-            determineTokenType(stateIndex);
-            // need to retain the character that was being processed when the state is in a complete state
-            tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
-            tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
+        if (stateIndex  >= 1000) {
+            processFinalTokenState();
+            checkCharacter(tokenNextFragment);
         }
     }
     else if (tokenFragment.charType == operators) {
@@ -162,23 +154,22 @@ void checkCharacter(partialToken_t token){
             //error
         }
         if (stateIndex >= 1000) {
-            determineTokenType(stateIndex);
-                // need to retain the character that was being processed when the state is in a complete state
-                // restore the tokenInstance before the endd
-            tokenCurrent.tokenInstance.pop_back();
-            
-            tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
-            tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
-            tokenNextFragment.charType = tokenFragment.charType;
-            tokenNextFragment.needToProcess = true;
-            // since we have a finished token, next time a character is checked, its the start of a new token
-            stateIndex = 0;
-            
-            //send back into checkCharacter
-            printToken();
-            clearTokenCurrent();
+            processFinalTokenState();
             checkCharacter(tokenNextFragment);
-            // we found a token, clear out tokenCurrent for next run
+
+        }
+    }
+    else if (tokenFragment.charType == whitespace){
+        if (stateTable[stateIndex][21] != error){
+            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
+            tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
+            stateIndex = (stateTable[stateIndex][21-1]);
+        } else {
+            //error
+        }
+        if (stateIndex >= 1000) {
+            processFinalTokenState();
+            checkCharacter(tokenNextFragment);
         }
     }
     else if (tokenFragment.characterToCheck == EOF){
@@ -187,20 +178,34 @@ void checkCharacter(partialToken_t token){
         tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
 
     }
-    
-    else if (tokenFragment.characterToCheck == newLine){
-        
-    }
-    
     else {
         //error
     }
-    
+
    
+}
+void processFinalTokenState (){
+    determineTokenType(stateIndex);
+    // need to retain the character that was being processed when the state is in a complete state
+    // restore the tokenInstance before the endd
+    if (tokenCurrent.tokenInstance.length() > 1){
+        tokenCurrent.tokenInstance.pop_back();
+        if (!isspace(tokenNextFragment.characterToCheck)){
+            tokenNextFragment.characterToCheck = tokenFragment.characterToCheck;
+            tokenNextFragment.lineNumberCharacterOn = tokenFragment.lineNumberCharacterOn;
+            tokenNextFragment.charType = tokenFragment.charType;
+            tokenNextFragment.needToProcess = true;
+        }
+        }
+    // since we have a finished token, next time a character is checked, its the start of a new token
+    stateIndex = 0;
+    
+    //send back into checkCharacter
+    printToken();
+    clearTokenCurrent();
 }
 
 void clearTokenCurrent(){
-    tokenCurrent.tokenInstance = '\0';
     tokenCurrent.lineNumber = 0;
     tokenCurrent.tokenInstance = "";
 }
@@ -265,8 +270,8 @@ void filter1(char workingCharacter, int lineNumber){
         if (workingCharacter == ':' || workingCharacter == '.' || workingCharacter == '(' || workingCharacter == ')' || workingCharacter == ';' || workingCharacter == '{' || workingCharacter == '}' || workingCharacter == ',' || workingCharacter == '[' || workingCharacter == ']'){
             tokenFragment.charType = delimiter;
         }
-        if (workingCharacter == '\n'){
-            tokenFragment.charType = newLine;
+        if (isspace(workingCharacter)){
+            tokenFragment.charType = whitespace;
         }
         if (workingCharacter == EOF){
             tokenFragment.charType = eof;
@@ -275,13 +280,6 @@ void filter1(char workingCharacter, int lineNumber){
         scanner(tokenFragment);
         
     }
-    
-}
-
-void markTokenNextFragmentAsStale(){
-    //we are done holding on to this information
-
-    
     
 }
 
