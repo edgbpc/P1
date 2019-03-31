@@ -166,23 +166,30 @@ token_t checkCharacter(partialToken_t tokenFragment){
     return tokenCurrent;
 }
 
-void sendtoScanner(partialToken_t tokenFragment){
-    if (tokenFragment.isPartOfComment == true){
-        // invoke scanner
-    }
+void scanner(partialToken_t tokenFragment){
+    cout << tokenFragment.characterToCheck << endl;
+    cout << tokenFragment.lineNumberCharacterOn << endl;
+    
 }
 
-partialToken_t filter1(char workingCharacter, int lineNumber){
+void filter1(char workingCharacter, int lineNumber){
     // filter found a line starting with a comment
+    
     if (workingCharacter == '&'){
         tokenFragment.isPartOfComment = true;
-    } else {
-        tokenFragment.isPartOfComment = false;
-        tokenFragment.characterToCheck = workingCharacter;
-        tokenFragment.isPartOfComment = false;
-        tokenFragment.fragmentCompleted = false;
     }
-    return tokenFragment;
+    
+    if (tokenFragment.isPartOfComment == true){
+        // do nothing, keep reading until \n is read
+        if (workingCharacter == '\n'){
+            tokenFragment.isPartOfComment = false;
+        }
+    } else {
+        tokenFragment.characterToCheck = workingCharacter;
+        tokenFragment.lineNumberCharacterOn = lineNumber;
+        scanner(tokenFragment);
+    }
+    
 }
 
 bool filter2(token_t token){
