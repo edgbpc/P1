@@ -9,6 +9,7 @@
 #ifndef token_h
 #define token_h
 
+#include <map>
 #include <string>
 
 using namespace std;
@@ -17,10 +18,11 @@ enum tokenID_t{
     identifierToken, digitToken, delimiterToken, operatorToken, EOFToken, reservedWordToken, comment
 };
 
-
 enum charTypes{
     lower, upper, digit, delimiter, operators, whitespace, eof
 };
+
+
 
 struct token_t {
     tokenID_t tokenID;

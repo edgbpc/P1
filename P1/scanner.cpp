@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include <stdlib.h>
 #include "scanner.h"
 #include "token.h"
 
@@ -18,12 +19,11 @@
 using namespace std;
 
 const string operatorss = "+-*/%<>=";
-//const string lowerCase = "abcdefghijklmnopqrstuvwxyz";
-//const string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const string reservedWords[] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};//
-const string delimiters = ":.();{}[] ";
-//const string digits = "1234567890";
+const string delimiters = ":.();{},[]";
 string tokenTypes[] { "identifierToken", "digitToken", "delimiterToken", "operatorToken", "EOFToken" };
+int delimiterIndex;
+int operatorIndex;
 
 
 
@@ -43,20 +43,20 @@ const int stateTable[][23] = {
 /*s7|6*/     {   8,    8,    8,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
 /*s8|7*/     {   9,    9,    9,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
 /*s9|8*/     {1000, 1000, 1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
-/*s10|9*/    {1001, 1001,   11,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s11|0*/    {1001, 1001,   12,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s12|11*/   {1001, 1001,   13,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s13|12*/   {1001, 1001,   14,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s14|13*/   {1001, 1001,   15,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s15|14*/   {1001, 1001,   16,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s16|15*/   {1001, 1001,   17,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s17|16*/   {1001, 1001, 1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
+/*s10|9*/    {  -1,   -1,   11,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
+/*s11|20*/   {  -1,   -1,   12,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
+/*s12|11*/   {  -1,   -1,   13,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
+/*s13|12*/   {  -1,   -1,   14,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
+/*s14|13*/   {  -1,   -1,   15,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
+/*s15|14*/   {  -1,   -1,   16,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
+/*s16|15*/   {  -1,   -1,   17,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
+/*s17|16*/   {  -1,   -1, 1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
 /*s18|17*/   {  18,   18,   18,     18,     18,     18,     18,     18,     18,     18,     18,     18,     18,     18,     18,     18,      18,    18,     18,      18,     18,   18,   18 },
 /*s19|18*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
-/*s20|19*/   {1002, 1002, 1002,     22,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
-/*s21|20*/   {1002, 1002, 1002,     22,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
+/*s20|19*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
+/*s21|20*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
 /*s22|21*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
-/*s23|22*/   {1002, 1002, 1002,     22,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
+/*s23|22*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
 /*s24|23*/   {1003, 1003, 1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,    1003,  1003,   1003,    1003,   1003, 1003, 1003 },
     
     // key: <0 = Error, < 1000 = go to new state, > 1000 final state as follows: 1000 = idToken, 1001 = numToken, 1002 = operatorToken, 1003 = delimiterToken
@@ -68,16 +68,18 @@ char lookaheadCharacter;
 bool newToken = false;
 
 
+
 token_t tokenCurrent;
 partialToken_t tokenNextFragment;
 partialToken_t tokenFragment;
-int tokenState;
+
 
 int stateIndex = 0; //start at index 0/state 1
 int previousStateIndex;
 
 void checkCharacter(partialToken_t token){
   
+
    // int index = lowerCase.find(tokenFragment.characterToCheck);
     
     //check if we have a character still needing processed
@@ -95,11 +97,14 @@ void checkCharacter(partialToken_t token){
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
             stateIndex = (stateTable[stateIndex][1]);
         } else {
-            //error
+            cout << "Error: " << tokenCurrent.tokenInstance + tokenFragment.characterToCheck << " is not valid." << endl;
+            exit(EXIT_FAILURE);
         }
         if (stateIndex >= 1000){
             processFinalTokenState();
             checkCharacter(tokenNextFragment);
+        } else {
+            stateIndex = stateIndex - 1;
         }
     }
     else if (tokenFragment.charType == upper){
@@ -108,48 +113,116 @@ void checkCharacter(partialToken_t token){
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
             stateIndex = (stateTable[stateIndex][0]);
         } else {
-            //error
+            cout << "Error Expected lowercase, digit, delimiter, or operator.  Received uppercase." << endl;
+            exit(EXIT_FAILURE);
         }
         if (stateIndex >= 1000){
             processFinalTokenState();
             checkCharacter(tokenNextFragment);
+        } else {
+            stateIndex = stateIndex - 1;
         }
     }
     else if (tokenFragment.charType == digit){
         if (stateTable[stateIndex][2] != error){
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = (stateTable[stateIndex][2-1]);
+            stateIndex = (stateTable[stateIndex][2]);
         } else {
-            //error
+            cout << "Error: Expected digit, delimiter or operator.  Received letter." << endl;
+            exit(EXIT_FAILURE);
         }
         if (stateIndex >= 1000){
             processFinalTokenState();
             checkCharacter(tokenNextFragment);
+        } else {
+            stateIndex = stateIndex - 1;
         }
     }
-    //TODO - fix next state algorithm for delimiters/operators
     else if (tokenFragment.charType == delimiter) {
-        int delimiterIndex = int(delimiters.find(tokenFragment.characterToCheck));
+      //  int delimiterIndex = int(delimiters.find(tokenFragment.characterToCheck));
+        switch (tokenFragment.characterToCheck){
+                //:.();{},[]
+            case ':':
+                delimiterIndex = 6;
+                break;
+            case '.':
+                delimiterIndex = 12;
+                break;
+            case '(':
+                delimiterIndex = 13;
+                break;
+            case ')':
+                delimiterIndex = 14;
+                break;
+            case ';':
+                delimiterIndex = 15;
+                break;
+            case '{':
+                delimiterIndex = 16;
+                break;
+            case '}':
+                delimiterIndex = 17;
+                break;
+            case ',':
+                delimiterIndex = 18;
+                break;
+            case '[':
+                delimiterIndex = 19;
+                break;
+            case ']':
+                delimiterIndex = 20;
+                break;
+        }
         if (stateTable[stateIndex][delimiterIndex]  != error) {
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
             previousStateIndex = stateIndex;
-            stateIndex = stateTable[stateIndex][delimiterIndex - 1];
+            stateIndex = stateTable[stateIndex][delimiterIndex];
         } else {
             //error
         }
         if (stateIndex  >= 1000) {
             processFinalTokenState();
             checkCharacter(tokenNextFragment);
+        } else {
+            stateIndex = stateIndex - 1;
         }
     }
     else if (tokenFragment.charType == operators) {
-        int operatorIndex = int(operatorss.find(tokenFragment.characterToCheck));
+     //   int operatorIndex = int(operatorss.find(tokenFragment.characterToCheck));
+        switch (tokenFragment.characterToCheck){
+                // +-*/%<>=
+            case '+':
+                operatorIndex = 7;
+                break;
+            case '-':
+                operatorIndex = 8;
+                break;
+            case '*':
+                operatorIndex = 9;
+                break;
+            case '/':
+                operatorIndex = 10;
+                break;
+            case '%':
+                operatorIndex = 11;
+                break;
+            case '<':
+                operatorIndex = 4;
+                break;
+            case '>':
+                operatorIndex = 5;
+                break;
+            case '=':
+                operatorIndex = 3;
+                break;
+                
+        }
         if (stateTable[stateIndex][operatorIndex] != error) {
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = stateTable[stateIndex][operatorIndex - 1];
+            stateIndex = stateTable[stateIndex][operatorIndex];
         } else {
             //error
         }
@@ -157,19 +230,23 @@ void checkCharacter(partialToken_t token){
             processFinalTokenState();
             checkCharacter(tokenNextFragment);
 
+        } else {
+            stateIndex = stateIndex - 1;
         }
     }
     else if (tokenFragment.charType == whitespace){
         if (stateTable[stateIndex][21] != error){
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = (stateTable[stateIndex][21-1]);
+            stateIndex = (stateTable[stateIndex][21]);
         } else {
             //error
         }
         if (stateIndex >= 1000) {
             processFinalTokenState();
             checkCharacter(tokenNextFragment);
+        } else {
+            stateIndex = stateIndex - 1;
         }
     }
     else if (tokenFragment.characterToCheck == EOF){
@@ -181,6 +258,7 @@ void checkCharacter(partialToken_t token){
     else {
         //error
     }
+
 
    
 }
@@ -211,6 +289,16 @@ void clearTokenCurrent(){
 }
 
 void printToken(){
+ 
+    //remove leading space that sometimes is included
+    if (tokenCurrent.tokenInstance[0] == ' ' || tokenCurrent.tokenInstance[0] == '\n'){
+        tokenCurrent.tokenInstance.replace(0,1,"");
+    }
+    //remove trailing \n that sometimes is included
+    if ((tokenCurrent.tokenInstance.length()) == '\n'){
+        tokenCurrent.tokenInstance.pop_back();
+    }
+    
     cout << "[ " << tokenTypes[tokenCurrent.tokenID] << "|" << tokenCurrent.tokenInstance << "|" << tokenCurrent.lineNumber << " ]" << endl;
 }
 
@@ -235,7 +323,7 @@ void determineTokenType(int stateIndex){
 
 
 void scanner(partialToken_t token){
-    cout << tokenFragment.characterToCheck << '\t' << tokenFragment.lineNumberCharacterOn << endl;
+//    cout << tokenFragment.characterToCheck << '\t' << tokenFragment.lineNumberCharacterOn << endl;
     checkCharacter(tokenFragment);
     
 }
