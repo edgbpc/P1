@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C36AC7DD22503732002D3CB4 /* testScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36AC7DB22503732002D3CB4 /* testScanner.cpp */; };
+		C36AC7E122519467002D3CB4 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = C36AC7E022519467002D3CB4 /* Makefile */; };
 		C3B2E6A0224DADCA0019671E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B2E69F224DADCA0019671E /* main.cpp */; };
 		C3B2E6A9224DAEF20019671E /* scanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B2E6A7224DAEF20019671E /* scanner.cpp */; };
 /* End PBXBuildFile section */
@@ -28,6 +29,7 @@
 		C36AC7DB22503732002D3CB4 /* testScanner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testScanner.cpp; sourceTree = "<group>"; };
 		C36AC7DC22503732002D3CB4 /* testScanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = testScanner.h; sourceTree = "<group>"; };
 		C36AC7DF225042E2002D3CB4 /* testFile.sp19 */ = {isa = PBXFileReference; lastKnownFileType = text; path = testFile.sp19; sourceTree = "<group>"; };
+		C36AC7E022519467002D3CB4 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		C3B2E69C224DADCA0019671E /* P1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = P1; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B2E69F224DADCA0019671E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C3B2E6A6224DAE2A0019671E /* token.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = token.h; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				C36AC7DB22503732002D3CB4 /* testScanner.cpp */,
 				C36AC7DC22503732002D3CB4 /* testScanner.h */,
 				C36AC7DF225042E2002D3CB4 /* testFile.sp19 */,
+				C36AC7E022519467002D3CB4 /* Makefile */,
 			);
 			path = P1;
 			sourceTree = "<group>";
@@ -134,6 +137,7 @@
 			files = (
 				C3B2E6A9224DAEF20019671E /* scanner.cpp in Sources */,
 				C36AC7DD22503732002D3CB4 /* testScanner.cpp in Sources */,
+				C36AC7E122519467002D3CB4 /* Makefile in Sources */,
 				C3B2E6A0224DADCA0019671E /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
