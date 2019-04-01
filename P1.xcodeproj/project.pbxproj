@@ -26,6 +26,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C34A17D62251AFDE00C27259 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		C36AC7DB22503732002D3CB4 /* testScanner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testScanner.cpp; sourceTree = "<group>"; };
 		C36AC7DC22503732002D3CB4 /* testScanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = testScanner.h; sourceTree = "<group>"; };
 		C36AC7DF225042E2002D3CB4 /* testFile.sp19 */ = {isa = PBXFileReference; lastKnownFileType = text; path = testFile.sp19; sourceTree = "<group>"; };
@@ -75,6 +76,7 @@
 				C36AC7DC22503732002D3CB4 /* testScanner.h */,
 				C36AC7DF225042E2002D3CB4 /* testFile.sp19 */,
 				C36AC7E022519467002D3CB4 /* Makefile */,
+				C34A17D62251AFDE00C27259 /* README */,
 			);
 			path = P1;
 			sourceTree = "<group>";

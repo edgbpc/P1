@@ -19,7 +19,7 @@
 using namespace std;
 
 const string operatorss = "+-*/%<>=";
-const string reservedWords[11] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};//
+const string reservedWords[11] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};
 const string delimiters = ":.();{},[]";
 string tokenTypes[] = { "identifierToken", "digitToken", "delimiterToken", "operatorToken", "EOFToken", "reservedWordToken" };
 int delimiterIndex;
@@ -251,8 +251,10 @@ void checkCharacter(partialToken_t token){
     }
     else if (tokenFragment.characterToCheck == EOF){
         tokenCurrent.tokenID = EOFToken;
-        tokenCurrent.tokenInstance = EOF;
+        tokenCurrent.tokenInstance = "EOF ";
         tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
+        processFinalTokenState();
+
 
     }
     else {
@@ -334,28 +336,36 @@ void filter1(char workingCharacter, int lineNumber){
         if (islower(workingCharacter)){
             tokenFragment.charType = lower;
         }
-        if (isupper(workingCharacter)){
+        else if (isupper(workingCharacter)){
             tokenFragment.charType = upper;
         }
-        if (isdigit(workingCharacter)){
+        else if (isdigit(workingCharacter)){
             tokenFragment.charType = digit;
         }
-        if (workingCharacter == '+' || workingCharacter == '-' || workingCharacter == '/' || workingCharacter == '*' || workingCharacter == '%' || workingCharacter == '=' || workingCharacter == '>' || workingCharacter == '<'){
+        else if (workingCharacter == '+' || workingCharacter == '-' || workingCharacter == '/' || workingCharacter == '*' || workingCharacter == '%' || workingCharacter == '=' || workingCharacter == '>' || workingCharacter == '<'){
             tokenFragment.charType = operators;
         }
-        if (workingCharacter == ':' || workingCharacter == '.' || workingCharacter == '(' || workingCharacter == ')' || workingCharacter == ';' || workingCharacter == '{' || workingCharacter == '}' || workingCharacter == ',' || workingCharacter == '[' || workingCharacter == ']'){
+        else if (workingCharacter == ':' || workingCharacter == '.' || workingCharacter == '(' || workingCharacter == ')' || workingCharacter == ';' || workingCharacter == '{' || workingCharacter == '}' || workingCharacter == ',' || workingCharacter == '[' || workingCharacter == ']'){
             tokenFragment.charType = delimiter;
         }
-        if (isspace(workingCharacter)){
+        else if (isspace(workingCharacter)){
             tokenFragment.charType = whitespace;
         }
-        if (workingCharacter == EOF){
+        else if (workingCharacter == EOF){
             tokenFragment.charType = eof;
+        } else {
+            cout << "Error: " << workingCharacter << " is not a valid character." << endl;
+            exit(EXIT_FAILURE);
         }
         
         scanner(tokenFragment);
         
     }
+    
+}
+
+void executeScanner(char workingCharacter, int lineNumber){
+    filter1(workingCharacter, lineNumber);
     
 }
 

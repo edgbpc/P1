@@ -14,8 +14,6 @@
 
 using namespace std;
 
-
-
 testScanner::testScanner(){
     
 }
@@ -27,13 +25,18 @@ void testScanner::runTestScanner(ifstream  & fileToRead){
     // if \n encountered, increment lineNumber
     while (fileToRead.get(character)){
         
-        filter1(character, lineNumber);
+        executeScanner(character, lineNumber);
+        
+    //    filter1(character, lineNumber);
         
         if (character == '\n') {
             lineNumber++;
         }
         
+     //   executeScanner(EOF, lineNumber);
+    
     }
+    executeScanner(EOF, lineNumber);
 
     
 }

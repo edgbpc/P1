@@ -19,6 +19,7 @@ class testScanner {
     public:
         testScanner();
         void runTestScanner(ifstream & fileToRead);
+        void printToken();
 
     
     private:

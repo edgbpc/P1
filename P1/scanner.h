@@ -21,7 +21,7 @@ void printToken();
 void clearTokenCurrent();
 void processFinalTokenState();
 void filter2();
-
+void executeScanner(char workingCharacter, int lineNumber);
 
 
 

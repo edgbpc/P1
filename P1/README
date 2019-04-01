@@ -1,0 +1,13 @@
+Option 3
+
+FSA Table is located in scanner.cpp
+Driver:
+filter1() calls scanner() calls checkCharacter() calls filter2()
+
+I did test against the suggestions in P1 Testing and they all passed.  I also tested a number of my own edge cases.
+I am sure there's additional error conditins that needs to be included in my FSA Table.
+Also need to improve the error messaging that the user receives.
+
+I will upload my graph on canvas.  Please note that i made this graph first and there may have been implemmentation decisions made during coding that the graph may not be 100% exactly
+what is going on in the code.  There was some element of having to finesse the execution of the character checking.
+
