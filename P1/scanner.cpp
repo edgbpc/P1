@@ -377,9 +377,11 @@ void executeScanner(char workingCharacter){
 
 void filter2(){
     //remove leading space that sometimes is included
-    if (tokenCurrent.tokenInstance[0] == ' ' || tokenCurrent.tokenInstance[0] == '\n'){
-        tokenCurrent.tokenInstance.replace(0,1,"");
-    }
+    do {
+        if (tokenCurrent.tokenInstance[0] == ' ' || tokenCurrent.tokenInstance[0] == '\n'){
+            tokenCurrent.tokenInstance.replace(0,1,"");
+        }
+    } while (isspace(tokenCurrent.tokenInstance[0]));
     //remove trailing \n that sometimes is included
     if ((tokenCurrent.tokenInstance.length()) == '\n'){
         tokenCurrent.tokenInstance.pop_back();
