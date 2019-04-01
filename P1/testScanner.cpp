@@ -14,31 +14,24 @@
 
 using namespace std;
 
+token_t receivedToken;
+
 testScanner::testScanner(){
     
 }
 
 void testScanner::runTestScanner(ifstream  & fileToRead){
-    int lineNumber = 1; //start on line 1
-    char character;
- 
-    // if \n encountered, increment lineNumber
-    while (fileToRead.get(character)){
-        
-        executeScanner(character, lineNumber);
-        
-    //    filter1(character, lineNumber);
-        
-        if (character == '\n') {
-            lineNumber++;
-        }
-        
-     //   executeScanner(EOF, lineNumber);
+  //  char character;
     
+    if (fileToRead.eof()) {
+        // end of file reach, testScanner is done
+        return;
+    }  else {
+        char character = fileToRead.get();
+        executeScanner(character);
     }
-    executeScanner(EOF, lineNumber);
-
     
+    runTestScanner(fileToRead);
 }
 
 

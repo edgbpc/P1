@@ -14,14 +14,14 @@
 
 void checkCharacter(partialToken_t tokenFragment);
 void scanner(partialToken_t tokenFragment);
-void filter1(char workingCharacter, int lineNumber);
+void filter1(char workingCharacter);
 bool filter2(token_t token);
 void determineTokenType(int stateIndex);
 void printToken();
 void clearTokenCurrent();
 void processFinalTokenState();
 void filter2();
-void executeScanner(char workingCharacter, int lineNumber);
+void executeScanner(char workingCharacter);
 
 
 

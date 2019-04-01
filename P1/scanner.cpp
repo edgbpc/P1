@@ -76,6 +76,7 @@ partialToken_t tokenFragment;
 
 int stateIndex = 0; //start at index 0/state 1
 int previousStateIndex;
+int lineNumber = 1; //start at 1
 
 void checkCharacter(partialToken_t token){
   
@@ -318,9 +319,14 @@ void scanner(partialToken_t token){
     
 }
 
-void filter1(char workingCharacter, int lineNumber){
-    // filter found a line starting with a comment
+void filter1(char workingCharacter){
     
+    // if character is \n, increment.  also EOF is on its line, so increment
+    if (workingCharacter == '\n' || workingCharacter == EOF){
+        lineNumber++;
+    }
+    // filter found a line starting with a comment
+
     if (workingCharacter == '&'){
         tokenFragment.isPartOfComment = true;
     }
@@ -364,8 +370,8 @@ void filter1(char workingCharacter, int lineNumber){
     
 }
 
-void executeScanner(char workingCharacter, int lineNumber){
-    filter1(workingCharacter, lineNumber);
+void executeScanner(char workingCharacter){
+    filter1(workingCharacter);
     
 }
 
