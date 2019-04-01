@@ -1,22 +1,23 @@
-CC = g++
-CFLAGS =
+CC	= g++
+CFLAGS	= 
 
-TARGET1 = scanner
-OBJS1 = main.o
-OBJS2 = scanner.o
-OBJS3 = testScanner.o
+TARGET1	= scanner
+OBJS1	= main.o
+OBJS2	= scanner.o
+OBJS3	= testScanner.o
+CXXFLAGS = -std=c++11
 
 .SUFFIXES: .c .o
 
-all: $(TARGET1)
+all:	$(TARGET1)
 
-scanner: $(OBJS1) $(OBJS2) $(OBJS3)
-        $(CC) $(CFLAGS) $(OBJS1) $(OBJS2) $(OBJS3) -o $@
+scanner:	$(OBJS1) $(OBJS2) $(OBJS3)
+		$(CC) $(CFLAGS) $(CXXFLAGS) $(OBJS1) $(OBJS2) $(OBJS3) -o $@
 
 
 .c.o:
-    $(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $<
 
-.PHONY
+.PHONY: clean
 clean:
-    /bin/rm -f *.o *~ $(TARGET1)
+	/bin/rm -f *.o *~ $(TARGET1)
