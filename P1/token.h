@@ -15,7 +15,7 @@
 using namespace std;
 
 enum tokenID_t{
-    identifierToken, digitToken, delimiterToken, operatorToken, EOFToken, reservedWordToken, comment
+    identifierToken, digitToken, delimiterToken, operatorToken, EOFToken, reservedWordToken
 };
 
 enum charTypes{

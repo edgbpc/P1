@@ -20,6 +20,7 @@ void determineTokenType(int stateIndex);
 void printToken();
 void clearTokenCurrent();
 void processFinalTokenState();
+void filter2();
 
 
 

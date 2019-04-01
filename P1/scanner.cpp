@@ -19,9 +19,9 @@
 using namespace std;
 
 const string operatorss = "+-*/%<>=";
-const string reservedWords[] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};//
+const string reservedWords[11] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};//
 const string delimiters = ":.();{},[]";
-string tokenTypes[] { "identifierToken", "digitToken", "delimiterToken", "operatorToken", "EOFToken" };
+string tokenTypes[] = { "identifierToken", "digitToken", "delimiterToken", "operatorToken", "EOFToken", "reservedWordToken" };
 int delimiterIndex;
 int operatorIndex;
 
@@ -258,8 +258,6 @@ void checkCharacter(partialToken_t token){
     else {
         //error
     }
-
-
    
 }
 void processFinalTokenState (){
@@ -274,11 +272,11 @@ void processFinalTokenState (){
             tokenNextFragment.charType = tokenFragment.charType;
             tokenNextFragment.needToProcess = true;
         }
-        }
+    }
     // since we have a finished token, next time a character is checked, its the start of a new token
     stateIndex = 0;
     
-    //send back into checkCharacter
+    filter2();
     printToken();
     clearTokenCurrent();
 }
@@ -289,16 +287,6 @@ void clearTokenCurrent(){
 }
 
 void printToken(){
- 
-    //remove leading space that sometimes is included
-    if (tokenCurrent.tokenInstance[0] == ' ' || tokenCurrent.tokenInstance[0] == '\n'){
-        tokenCurrent.tokenInstance.replace(0,1,"");
-    }
-    //remove trailing \n that sometimes is included
-    if ((tokenCurrent.tokenInstance.length()) == '\n'){
-        tokenCurrent.tokenInstance.pop_back();
-    }
-    
     cout << "[ " << tokenTypes[tokenCurrent.tokenID] << "|" << tokenCurrent.tokenInstance << "|" << tokenCurrent.lineNumber << " ]" << endl;
 }
 
@@ -371,11 +359,23 @@ void filter1(char workingCharacter, int lineNumber){
     
 }
 
-bool filter2(token_t token){
-    if (1){
-        return true;
+void filter2(){
+    //remove leading space that sometimes is included
+    if (tokenCurrent.tokenInstance[0] == ' ' || tokenCurrent.tokenInstance[0] == '\n'){
+        tokenCurrent.tokenInstance.replace(0,1,"");
+    }
+    //remove trailing \n that sometimes is included
+    if ((tokenCurrent.tokenInstance.length()) == '\n'){
+        tokenCurrent.tokenInstance.pop_back();
+    }
+    if (tokenCurrent.tokenID == identifierToken){
+        for (int i = 0; i <= 11; i++){
+            if (tokenCurrent.tokenInstance == reservedWords[i]) {
+                tokenCurrent.tokenID = reservedWordToken;
+            }
+        }
     } else {
-        return false;
+        //nothing
     }
 
 
