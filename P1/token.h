@@ -22,6 +22,8 @@ enum charTypes{
     lower, upper, digit, delimiter, operators, whitespace, eof
 };
 
+const string tokenTypes[] = { "identifierToken", "digitToken", "delimiterToken", "operatorToken", "EOFToken", "reservedWordToken" };
+
 
 
 struct token_t {

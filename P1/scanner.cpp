@@ -18,19 +18,13 @@
 
 using namespace std;
 
-const string operatorss = "+-*/%<>=";
 const string reservedWords[11] = {"iter", "void", "var", "return", "scan", "print", "program", "cond", "then", "let", "int"};
-const string delimiters = ":.();{},[]";
-string tokenTypes[] = { "identifierToken", "digitToken", "delimiterToken", "operatorToken", "EOFToken", "reservedWordToken" };
 int delimiterIndex;
 int operatorIndex;
-
-
 
 // columns (valid characters)  as follows:
 // uppercase    lowercase    digit     =    <      >     :    +    -    *    /    %    .    (    )    ;    {    }    ,    [    ]    WS    &
 //rows (states) as follows: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
-
 const int stateTable[][23] = {
     //         0        1      2    3       4       5       6       7       8       9       10      11      12      13      14      15      16     17       18      19      20      21  22
     //          UC,   LC,    D,    =,       <,      >,     :,      +,       -,      *,      /,     %,       .,      (,     ),       ;,       {,    },       ,,      [,      ],    WS,   &
@@ -64,19 +58,12 @@ const int stateTable[][23] = {
 };
 
 char workingCharacter;
-char lookaheadCharacter;
-bool newToken = false;
-
-
-
 token_t tokenCurrent;
 partialToken_t tokenNextFragment;
 partialToken_t tokenFragment;
-
-
 int stateIndex = 0; //start at index 0/state 1
-int previousStateIndex;
 int lineNumber = 1; //start at 1
+bool tokenComplete = false;
 
 void checkCharacter(partialToken_t token){
   
@@ -178,7 +165,6 @@ void checkCharacter(partialToken_t token){
         if (stateTable[stateIndex][delimiterIndex]  != error) {
             tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
             tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            previousStateIndex = stateIndex;
             stateIndex = stateTable[stateIndex][delimiterIndex];
         } else {
             //error
@@ -255,8 +241,6 @@ void checkCharacter(partialToken_t token){
         tokenCurrent.tokenInstance = "EOF ";
         tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
         processFinalTokenState();
-
-
     }
     else {
         //error
@@ -280,17 +264,25 @@ void processFinalTokenState (){
     stateIndex = 0;
     
     filter2();
-    printToken();
+    printToken(tokenCurrent);
     clearTokenCurrent();
 }
 
+token_t sendToken(){
+    token_t tokenToSend;
+    tokenToSend.tokenID = tokenCurrent.tokenID;
+    tokenToSend.tokenInstance = tokenCurrent.tokenInstance;
+    tokenToSend.lineNumber = tokenCurrent.lineNumber;
+    
+    return tokenToSend;
+}
+
 void clearTokenCurrent(){
-    tokenCurrent.lineNumber = 0;
     tokenCurrent.tokenInstance = "";
 }
 
-void printToken(){
-    cout << "[ " << tokenTypes[tokenCurrent.tokenID] << "|" << tokenCurrent.tokenInstance << "|" << tokenCurrent.lineNumber << " ]" << endl;
+void printToken(token_t token){
+    cout << "[ " << tokenTypes[token.tokenID] << "|" << token.tokenInstance << "|" << token.lineNumber << " ]" << endl;
 }
 
 void determineTokenType(int stateIndex){
@@ -320,22 +312,24 @@ void scanner(partialToken_t token){
 }
 
 void filter1(char workingCharacter){
+    tokenComplete = false;
     
     // if character is \n, increment.  also EOF is on its line, so increment
     if (workingCharacter == '\n' || workingCharacter == EOF){
         lineNumber++;
     }
+    
     // filter found a line starting with a comment
-
     if (workingCharacter == '&'){
         tokenFragment.isPartOfComment = true;
     }
-    
+    // keep receiving characters but do nothing with them if the comment hasn't been terminated yet
     if (tokenFragment.isPartOfComment == true){
         // do nothing, keep reading until \n is read
         if (workingCharacter == '\n'){
             tokenFragment.isPartOfComment = false;
         }
+        
     } else {
         tokenFragment.characterToCheck = workingCharacter;
         tokenFragment.lineNumberCharacterOn = lineNumber;
@@ -395,6 +389,7 @@ void filter2(){
     } else {
         //nothing
     }
+    
 
 
 

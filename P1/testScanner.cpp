@@ -29,8 +29,12 @@ void testScanner::runTestScanner(ifstream  & fileToRead){
     }  else {
         char character = fileToRead.get();
         executeScanner(character);
+        
+        if (tokenComplete == true) {
+            receivedToken = sendToken();
+            ::printToken(receivedToken);
+        }
     }
-    
     runTestScanner(fileToRead);
 }
 

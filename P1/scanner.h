@@ -17,12 +17,14 @@ void scanner(partialToken_t tokenFragment);
 void filter1(char workingCharacter);
 bool filter2(token_t token);
 void determineTokenType(int stateIndex);
-void printToken();
+void printToken(token_t token);
 void clearTokenCurrent();
 void processFinalTokenState();
 void filter2();
 void executeScanner(char workingCharacter);
+token_t sendToken();
 
+extern bool tokenComplete;
 
 
 
