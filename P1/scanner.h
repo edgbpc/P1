@@ -23,6 +23,7 @@ void processFinalTokenState();
 void filter2();
 void executeScanner(char workingCharacter);
 token_t getFinalToken();
+void processCharacter(int state);
 
 extern bool isTokenComplete;
 

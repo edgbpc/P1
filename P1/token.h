@@ -17,9 +17,11 @@ using namespace std;
 enum tokenID_t{
     identifierToken, digitToken, delimiterToken, operatorToken, EOFToken, reservedWordToken
 };
+//         0        1      2    3       4       5       6
+//          UC,   LC,    D,    opr,    del  ,      WS,
 
 enum charTypes{
-    lower, upper, digit, delimiter, operators, whitespace, eof
+    upper, lower, digit, operators, delimiters, whitespace, eof
 };
 
 const string tokenTypes[] = { "identifierToken", "digitToken", "delimiterToken", "operatorToken", "EOFToken", "reservedWordToken" };
