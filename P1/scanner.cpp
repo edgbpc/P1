@@ -27,6 +27,7 @@ int operatorIndex;
 // uppercase    lowercase    digit     =    <      >     :    +    -    *    /    %    .    (    )    ;    {    }    ,    [    ]    WS    &
 //rows (states) as follows: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
 // specs say assume no digit or identifer is longer then 8 characters.  I was not sure if I needed to control for that.  my FSA does.
+// state 18 as originally planned to be used for comments.  Unused in this version
 const int stateTable[][7] = {
     
     
@@ -61,7 +62,7 @@ char workingCharacter;
 token_t tokenCurrent;
 partialToken_t tokenNextFragment;
 partialToken_t tokenFragment;
- token_t finalToken;
+token_t finalToken;
 int stateIndex = 0; //start at index 0/state 1
 int lineNumber = 1; //start at 1
 bool isTokenComplete = false;
