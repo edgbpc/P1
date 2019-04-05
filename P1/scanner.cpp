@@ -63,12 +63,9 @@ partialToken_t tokenNextFragment;
 partialToken_t tokenFragment;
 int stateIndex = 0; //start at index 0/state 1
 int lineNumber = 1; //start at 1
-bool tokenComplete = false;
+bool isTokenComplete = false;
 
 void checkCharacter(partialToken_t token){
-  
-
-   // int index = lowerCase.find(tokenFragment.characterToCheck);
     
     //check if we have a character still needing processed
     //copy data from tokenNextFragment to tokenFragment so rest of logic can execute the same
@@ -86,7 +83,7 @@ void checkCharacter(partialToken_t token){
             stateIndex = (stateTable[stateIndex][1]);
         } else {
             cout << "Error: " << tokenCurrent.tokenInstance + tokenFragment.characterToCheck << " is not valid." << endl;
-            exit(EXIT_FAILURE);
+            exit(EXIT_SUCCESS);
         }
         if (stateIndex >= 1000){
             processFinalTokenState();
@@ -102,7 +99,7 @@ void checkCharacter(partialToken_t token){
             stateIndex = (stateTable[stateIndex][0]);
         } else {
             cout << "Error Expected lowercase, digit, delimiter, or operator.  Received uppercase." << endl;
-            exit(EXIT_FAILURE);
+            exit(EXIT_SUCCESS);
         }
         if (stateIndex >= 1000){
             processFinalTokenState();
@@ -118,7 +115,7 @@ void checkCharacter(partialToken_t token){
             stateIndex = (stateTable[stateIndex][2]);
         } else {
             cout << "Error: Expected digit, delimiter or operator.  Received letter." << endl;
-            exit(EXIT_FAILURE);
+            exit(EXIT_SUCCESS);
         }
         if (stateIndex >= 1000){
             processFinalTokenState();
@@ -312,12 +309,7 @@ void scanner(partialToken_t token){
 }
 
 void filter1(char workingCharacter){
-    tokenComplete = false;
-    
-    // if character is \n, increment.  also EOF is on its line, so increment
-    if (workingCharacter == '\n' || workingCharacter == EOF){
-        lineNumber++;
-    }
+    isTokenComplete = false;
     
     // filter found a line starting with a comment
     if (workingCharacter == '&'){
@@ -327,12 +319,20 @@ void filter1(char workingCharacter){
     if (tokenFragment.isPartOfComment == true){
         // do nothing, keep reading until \n is read
         if (workingCharacter == '\n'){
+            //also increment line number since end of a comment means a new line after
+            lineNumber++;   
             tokenFragment.isPartOfComment = false;
         }
         
     } else {
         tokenFragment.characterToCheck = workingCharacter;
         tokenFragment.lineNumberCharacterOn = lineNumber;
+
+        // if character is \n, increment.  also EOF is on its line, so increment
+        if (workingCharacter == '\n'){
+            lineNumber++;
+        }
+        
         if (islower(workingCharacter)){
             tokenFragment.charType = lower;
         }

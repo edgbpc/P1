@@ -1,1 +1,5 @@
-bA = 5
+program {
+int x = 5;
+& A comment 
+x + 4 = 9; &inline comment
+}

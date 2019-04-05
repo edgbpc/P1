@@ -24,7 +24,7 @@ void filter2();
 void executeScanner(char workingCharacter);
 token_t sendToken();
 
-extern bool tokenComplete;
+extern bool isTokenComplete;
 
 
 
