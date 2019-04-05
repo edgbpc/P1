@@ -61,6 +61,7 @@ char workingCharacter;
 token_t tokenCurrent;
 partialToken_t tokenNextFragment;
 partialToken_t tokenFragment;
+ token_t finalToken;
 int stateIndex = 0; //start at index 0/state 1
 int lineNumber = 1; //start at 1
 bool isTokenComplete = false;
@@ -261,17 +262,16 @@ void processFinalTokenState (){
     stateIndex = 0;
     
     filter2();
-    printToken(tokenCurrent);
+    isTokenComplete = true;
+    // prepare the token struct that will be sent to the calling function for the scanner
+    finalToken.tokenID = tokenCurrent.tokenID;
+    finalToken.tokenInstance = tokenCurrent.tokenInstance;
+    finalToken.lineNumber = tokenCurrent.lineNumber;
     clearTokenCurrent();
 }
 
-token_t sendToken(){
-    token_t tokenToSend;
-    tokenToSend.tokenID = tokenCurrent.tokenID;
-    tokenToSend.tokenInstance = tokenCurrent.tokenInstance;
-    tokenToSend.lineNumber = tokenCurrent.lineNumber;
-    
-    return tokenToSend;
+token_t getFinalToken(){
+    return finalToken;
 }
 
 void clearTokenCurrent(){

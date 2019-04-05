@@ -22,7 +22,7 @@ void clearTokenCurrent();
 void processFinalTokenState();
 void filter2();
 void executeScanner(char workingCharacter);
-token_t sendToken();
+token_t getFinalToken();
 
 extern bool isTokenComplete;
 

@@ -30,7 +30,7 @@ void testScanner::runTestScanner(ifstream  & fileToRead){
 	    executeScanner(character);
        
         if (isTokenComplete == true) {
-            receivedToken = sendToken();
+            receivedToken = getFinalToken();
             ::printToken(receivedToken);
         }
     }
