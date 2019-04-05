@@ -67,10 +67,9 @@ int main(int argc, const char * argv[]) {
 
 
   if (fileToRead.good()){
-	cout << "before runTestScanner(fileToRead)";
      myTestScanner.runTestScanner(fileToRead);
  }
-  //      fileToRead.close();
+        fileToRead.close();
     
     //clean up the temporary file created
     remove("temp.dat");
