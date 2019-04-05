@@ -1,5 +1,6 @@
 program {
-int x = 5;
+int xA : 5;
 & A comment 
-x + 4 = 9; &inline comment
+x + ( 4    ) = 9; &inline comment
+
 }

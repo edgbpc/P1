@@ -23,35 +23,35 @@ int delimiterIndex;
 int operatorIndex;
 
 // columns (valid characters)  as follows:
+// orignal table contined column for every operator and delimiter. However, I do not think that the scanner cares WHICH delimiter/operator it sees on that it does see one
 // uppercase    lowercase    digit     =    <      >     :    +    -    *    /    %    .    (    )    ;    {    }    ,    [    ]    WS    &
 //rows (states) as follows: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
-const int stateTable[][23] = {
-    //         0        1      2    3       4       5       6       7       8       9       10      11      12      13      14      15      16     17       18      19      20      21  22
-    //          UC,   LC,    D,    =,       <,      >,     :,      +,       -,      *,      /,     %,       .,      (,     ),       ;,       {,    },       ,,      [,      ],    WS,   &
-/*s1|0*/     {  -1,    2,   10,    21,     23,     20,     24,     19,     19,     19,     19,     19,     24,     24,     24,     24,      24,    24,     24,      24,     24,    1,  18  },
-/*s2|1*/     {   3,    3,    3,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
-/*s3|2*/     {   4,    4,    4,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
-/*s4|3*/     {   5,    5,    5,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
-/*s5|4*/     {   6,    6,    6,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
-/*s6|5*/     {   7,    7,    7,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
-/*s7|6*/     {   8,    8,    8,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
-/*s8|7*/     {   9,    9,    9,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
-/*s9|8*/     {1000, 1000, 1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,   1000,    1000,  1000,   1000,    1000,   1000, 1000, 1000 },
-/*s10|9*/    {  -1,   -1,   11,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s11|20*/   {  -1,   -1,   12,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s12|11*/   {  -1,   -1,   13,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s13|12*/   {  -1,   -1,   14,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s14|13*/   {  -1,   -1,   15,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s15|14*/   {  -1,   -1,   16,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s16|15*/   {  -1,   -1,   17,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s17|16*/   {  -1,   -1, 1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,   1001,    1001,  1001,   1001,    1001,   1001, 1001, 1001 },
-/*s18|17*/   {  18,   18,   18,     18,     18,     18,     18,     18,     18,     18,     18,     18,     18,     18,     18,     18,      18,    18,     18,      18,     18,   18,   18 },
-/*s19|18*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
-/*s20|19*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
-/*s21|20*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
-/*s22|21*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
-/*s23|22*/   {1002, 1002, 1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,   1002,    1002,  1002,   1002,    1002,   1002, 1002, 1002 },
-/*s24|23*/   {1003, 1003, 1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,   1003,    1003,  1003,   1003,    1003,   1003, 1003, 1003 },
+// specs say assume no digit or identifer is longer then 8 characters.  I was not sure if I needed to control for that.  my FSA does.
+const int stateTable[][7] = {
+    
+    
+    //         0        1      2    3       4       5       6
+    //          UC,   LC,    D,    opr,    del  ,      WS,
+ /*s1|0*/     {  -1,    2,   10,    19,        20,      1 },
+/*s2|1*/     {   3,    3,    3,   1000,      1000,   1000, },
+/*s3|2*/     {   4,    4,    4,   1000,      1000,   1000, },
+/*s4|3*/     {   5,    5,    5,   1000,      1000,   1000, },
+/*s5|4*/     {   6,    6,    6,   1000,      1000,   1000, },
+/*s6|5*/     {   7,    7,    7,   1000,      1000,   1000, },
+/*s7|6*/     {   8,    8,    8,   1000,      1000,   1000, },
+/*s8|7*/     {   9,    9,    9,   1000,      1000,   1000, },
+/*s9|8*/     {  -1,   -1,   -1,   1000,      1000,   1000, },  //state 9 when another character receives is an error.  specs say assume inditifiers no longer then 8
+/*s10|9*/    {  -1,   -1,   11,   1001,      1001,   1001, },
+/*s11|20*/   {  -1,   -1,   12,   1001,      1001,   1001, },
+/*s12|11*/   {  -1,   -1,   13,   1001,      1001,   1001, },
+/*s13|12*/   {  -1,   -1,   14,   1001,      1001,   1001, },
+/*s14|13*/   {  -1,   -1,   15,   1001,      1001,   1001, },
+/*s15|14*/   {  -1,   -1,   16,   1001,      1001,   1001, },
+/*s16|15*/   {  -1,   -1,   17,   1001,      1001,   1001, },
+/*s17|16*/   {  -1,   -1,   -1,   1001,      1001,   1001, },  // state 18 when another digit receives is an error.  specs say assume digits no longer then 8
+/*s18|17*/   {  }, //UNUSED.  Originally for comments
+/*s19|18*/   {1002, 1002, 1002,   1002,      1002,   1002, },
+/*s20|19*/   {1003, 1003, 1003,   1003,      1003,   1003, }
     
     // key: <0 = Error, < 1000 = go to new state, > 1000 final state as follows: 1000 = idToken, 1001 = numToken, 1002 = operatorToken, 1003 = delimiterToken
     
@@ -78,10 +78,8 @@ void checkCharacter(partialToken_t token){
     }
 
     if (tokenFragment.charType == lower){
-        if (stateTable[stateIndex][1] != error){
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
-            tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = (stateTable[stateIndex][1]);
+        if (stateTable[stateIndex][lower] != error){
+            processCharacter(lower);
         } else {
             cout << "Error: " << tokenCurrent.tokenInstance + tokenFragment.characterToCheck << " is not valid." << endl;
             exit(EXIT_SUCCESS);
@@ -94,10 +92,8 @@ void checkCharacter(partialToken_t token){
         }
     }
     else if (tokenFragment.charType == upper){
-        if (stateTable[stateIndex][0] != error){
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
-            tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = (stateTable[stateIndex][0]);
+        if (stateTable[stateIndex][upper] != error){
+            processCharacter(upper);
         } else {
             cout << "Error Expected lowercase, digit, delimiter, or operator.  Received uppercase." << endl;
             exit(EXIT_SUCCESS);
@@ -110,10 +106,8 @@ void checkCharacter(partialToken_t token){
         }
     }
     else if (tokenFragment.charType == digit){
-        if (stateTable[stateIndex][2] != error){
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
-            tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = (stateTable[stateIndex][2]);
+        if (stateTable[stateIndex][digit] != error){
+            processCharacter(digit);
         } else {
             cout << "Error: Expected digit, delimiter or operator.  Received letter." << endl;
             exit(EXIT_SUCCESS);
@@ -125,45 +119,9 @@ void checkCharacter(partialToken_t token){
             stateIndex = stateIndex - 1;
         }
     }
-    else if (tokenFragment.charType == delimiter) {
-      //  int delimiterIndex = int(delimiters.find(tokenFragment.characterToCheck));
-        switch (tokenFragment.characterToCheck){
-                //:.();{},[]
-            case ':':
-                delimiterIndex = 6;
-                break;
-            case '.':
-                delimiterIndex = 12;
-                break;
-            case '(':
-                delimiterIndex = 13;
-                break;
-            case ')':
-                delimiterIndex = 14;
-                break;
-            case ';':
-                delimiterIndex = 15;
-                break;
-            case '{':
-                delimiterIndex = 16;
-                break;
-            case '}':
-                delimiterIndex = 17;
-                break;
-            case ',':
-                delimiterIndex = 18;
-                break;
-            case '[':
-                delimiterIndex = 19;
-                break;
-            case ']':
-                delimiterIndex = 20;
-                break;
-        }
-        if (stateTable[stateIndex][delimiterIndex]  != error) {
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
-            tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = stateTable[stateIndex][delimiterIndex];
+    else if (tokenFragment.charType == delimiters) {
+        if (stateTable[stateIndex][delimiters]  != error) {
+            processCharacter(delimiters);
         } else {
             //error
         }
@@ -175,39 +133,8 @@ void checkCharacter(partialToken_t token){
         }
     }
     else if (tokenFragment.charType == operators) {
-     //   int operatorIndex = int(operatorss.find(tokenFragment.characterToCheck));
-        switch (tokenFragment.characterToCheck){
-                // +-*/%<>=
-            case '+':
-                operatorIndex = 7;
-                break;
-            case '-':
-                operatorIndex = 8;
-                break;
-            case '*':
-                operatorIndex = 9;
-                break;
-            case '/':
-                operatorIndex = 10;
-                break;
-            case '%':
-                operatorIndex = 11;
-                break;
-            case '<':
-                operatorIndex = 4;
-                break;
-            case '>':
-                operatorIndex = 5;
-                break;
-            case '=':
-                operatorIndex = 3;
-                break;
-                
-        }
-        if (stateTable[stateIndex][operatorIndex] != error) {
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
-            tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = stateTable[stateIndex][operatorIndex];
+        if (stateTable[stateIndex][operators] != error) {
+            processCharacter(operators);
         } else {
             //error
         }
@@ -220,10 +147,8 @@ void checkCharacter(partialToken_t token){
         }
     }
     else if (tokenFragment.charType == whitespace){
-        if (stateTable[stateIndex][21] != error){
-            tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
-            tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
-            stateIndex = (stateTable[stateIndex][21]);
+        if (stateTable[stateIndex][5] != error){
+            processCharacter(whitespace);
         } else {
             //error
         }
@@ -235,6 +160,7 @@ void checkCharacter(partialToken_t token){
         }
     }
     else if (tokenFragment.characterToCheck == EOF){
+        //special case if EOF
         tokenCurrent.tokenID = EOFToken;
         tokenCurrent.tokenInstance = "EOF ";
         tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
@@ -245,6 +171,13 @@ void checkCharacter(partialToken_t token){
     }
    
 }
+
+void processCharacter (int state){
+    tokenCurrent.tokenInstance = tokenCurrent.tokenInstance + tokenFragment.characterToCheck;
+    tokenCurrent.lineNumber = tokenFragment.lineNumberCharacterOn;
+    stateIndex = (stateTable[stateIndex][state]);
+}
+
 void processFinalTokenState (){
     determineTokenType(stateIndex);
     // need to retain the character that was being processed when the state is in a complete state
@@ -262,6 +195,7 @@ void processFinalTokenState (){
     stateIndex = 0;
     
     filter2();
+    
     isTokenComplete = true;
     // prepare the token struct that will be sent to the calling function for the scanner
     finalToken.tokenID = tokenCurrent.tokenID;
@@ -347,7 +281,7 @@ void filter1(char workingCharacter){
             tokenFragment.charType = operators;
         }
         else if (workingCharacter == ':' || workingCharacter == '.' || workingCharacter == '(' || workingCharacter == ')' || workingCharacter == ';' || workingCharacter == '{' || workingCharacter == '}' || workingCharacter == ',' || workingCharacter == '[' || workingCharacter == ']'){
-            tokenFragment.charType = delimiter;
+            tokenFragment.charType = delimiters;
         }
         else if (isspace(workingCharacter)){
             tokenFragment.charType = whitespace;
