@@ -21,15 +21,14 @@ testScanner::testScanner(){
 }
 
 void testScanner::runTestScanner(ifstream  & fileToRead){
-  //  char character;
     
-    if (fileToRead.eof()) {
+	if (fileToRead.eof()) {
         // end of file reach, testScanner is done
         return;
     }  else {
         char character = fileToRead.get();
-        executeScanner(character);
-        
+	    executeScanner(character);
+       
         if (isTokenComplete == true) {
             receivedToken = sendToken();
             ::printToken(receivedToken);

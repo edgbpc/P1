@@ -20,4 +20,4 @@ scanner:	$(OBJS1) $(OBJS2) $(OBJS3)
 
 .PHONY: clean
 clean:
-	/bin/rm -f *.o *~ $(TARGET1)
+	/bin/rm -f *.o *.dat  *~ $(TARGET1)

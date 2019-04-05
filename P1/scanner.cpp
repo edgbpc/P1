@@ -311,6 +311,7 @@ void scanner(partialToken_t token){
 void filter1(char workingCharacter){
     isTokenComplete = false;
     
+
     // filter found a line starting with a comment
     if (workingCharacter == '&'){
         tokenFragment.isPartOfComment = true;
@@ -365,7 +366,7 @@ void filter1(char workingCharacter){
 }
 
 void executeScanner(char workingCharacter){
-    filter1(workingCharacter);
+	filter1(workingCharacter);
     
 }
 
@@ -381,7 +382,7 @@ void filter2(){
         tokenCurrent.tokenInstance.pop_back();
     }
     if (tokenCurrent.tokenID == identifierToken){
-        for (int i = 0; i <= 11; i++){
+	    for (int i = 0; i <= 10; i++){
             if (tokenCurrent.tokenInstance == reservedWords[i]) {
                 tokenCurrent.tokenID = reservedWordToken;
             }
@@ -390,7 +391,6 @@ void filter2(){
         //nothing
     }
     
-
 
 
 }

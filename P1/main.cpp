@@ -49,11 +49,13 @@ int main(int argc, const char * argv[]) {
             cout << "File Input Mode" << endl;
             fileName = argv[1];
             fileName.append(".sp19");
-            //     cout << fileName << endl;
-            fileToRead.open(fileName.c_str());
-            
+            cout << fileName << endl;
+            cout << "after append" << endl;
+
+	    fileToRead.open(fileName.c_str());
+	    cout << "after fileToRead.open()" << endl; 
             outFileNameBase = argv[1];
-            
+            cout << "after outFileNameBase" << endl;
             break;
             
         default:
@@ -61,11 +63,14 @@ int main(int argc, const char * argv[]) {
             return 0;
             break;
     }
-    
-    if (fileToRead.good()){
-        myTestScanner.runTestScanner(fileToRead);
-}
-   //     fileToRead.close();
+
+
+
+  if (fileToRead.good()){
+	cout << "before runTestScanner(fileToRead)";
+     myTestScanner.runTestScanner(fileToRead);
+ }
+  //      fileToRead.close();
     
     //clean up the temporary file created
     remove("temp.dat");
