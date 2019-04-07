@@ -96,7 +96,7 @@ void checkCharacter(partialToken_t token){
         if (stateTable[stateIndex][upper] != error){
             processCharacter(upper);
         } else {
-            cout << "Error Expected lowercase, digit, delimiter, or operator.  Received uppercase." << endl;
+            cout << "Error: Invalid Character received on line: " << lineNumber << "while processing " << tokenFragment.characterToCheck << endl;
             exit(EXIT_SUCCESS);
         }
         if (stateIndex >= 1000){
@@ -110,7 +110,7 @@ void checkCharacter(partialToken_t token){
         if (stateTable[stateIndex][digit] != error){
             processCharacter(digit);
         } else {
-            cout << "Error: Expected digit, delimiter or operator.  Received letter." << endl;
+            cout << "Error: Invalid Character received on line: " << lineNumber << "while processing " << tokenFragment.characterToCheck << endl;
             exit(EXIT_SUCCESS);
         }
         if (stateIndex >= 1000){
@@ -124,7 +124,8 @@ void checkCharacter(partialToken_t token){
         if (stateTable[stateIndex][delimiters]  != error) {
             processCharacter(delimiters);
         } else {
-            //error
+            cout << "Error: Invalid Character received on line: " << lineNumber << "while processing " << tokenFragment.characterToCheck << endl;
+            exit(EXIT_SUCCESS);
         }
         if (stateIndex  >= 1000) {
             processFinalTokenState();
@@ -137,7 +138,8 @@ void checkCharacter(partialToken_t token){
         if (stateTable[stateIndex][operators] != error) {
             processCharacter(operators);
         } else {
-            //error
+            cout << "Error: Invalid Character received on line: " << lineNumber << "while processing " << tokenFragment.characterToCheck << endl;
+            exit(EXIT_SUCCESS);
         }
         if (stateIndex >= 1000) {
             processFinalTokenState();
@@ -151,7 +153,8 @@ void checkCharacter(partialToken_t token){
         if (stateTable[stateIndex][5] != error){
             processCharacter(whitespace);
         } else {
-            //error
+            cout << "Error: Invalid Character received on line: " << lineNumber << "while processing " << tokenFragment.characterToCheck << endl;
+            exit(EXIT_SUCCESS);
         }
         if (stateIndex >= 1000) {
             processFinalTokenState();
@@ -168,7 +171,8 @@ void checkCharacter(partialToken_t token){
         processFinalTokenState();
     }
     else {
-        //error
+        cout << "Error: Invalid Character received on line: " << lineNumber << "while processing " << tokenFragment.characterToCheck << endl;
+        exit(EXIT_SUCCESS);
     }
    
 }
@@ -291,7 +295,7 @@ void filter1(char workingCharacter){
             tokenFragment.charType = eof;
         } else {
             cout << "Error: " << workingCharacter << " is not a valid character." << endl;
-            exit(EXIT_FAILURE);
+            exit(EXIT_SUCCESS);
         }
         
         scanner(tokenFragment);

@@ -2,11 +2,21 @@ Option 3
 
 FSA Table is located in scanner.cpp
 Driver:
+
+testScanner receives a character and sends to filter1(). After some processing, the character is sent to scanner which called checkCharacter.  checkCharacter is the workhorse of my scanner.  if checkCharacter finishes a token, sends it to filter2().  filter2() sends the token back to testScanner which prints it.  If checkCharacter did not complete a token, it continues to receive characters until it does.
+
+
 filter1() calls scanner() calls checkCharacter() calls filter2()
 
 I did test against the suggestions in P1 Testing and they all passed.  I also tested a number of my own edge cases.
 I am sure there's additional error conditins that needs to be included in my FSA Table.
-Also need to improve the error messaging that the user receives.
+
+My error messaging could be improved.  Error messages are generic and only tell the user what line number and the character being processed.
+
+I made a big a change to my FSA table during development.  Previous i was processing every delimiter and operator as their own characters.  I no longer believe that's really necessary as the scanner
+should not care what the delimiter or operator is only that it is a delimiter or operator.
+My graph is thus, no longer representative of my table.
+
 
 I will upload my graph on canvas.  Please note that i made this graph first and there may have been implemmentation decisions made during coding that the graph may not be 100% exactly
 what is going on in the code.  There was some element of having to finesse the execution of the character checking.
