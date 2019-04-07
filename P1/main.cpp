@@ -49,13 +49,9 @@ int main(int argc, const char * argv[]) {
             cout << "File Input Mode" << endl;
             fileName = argv[1];
             fileName.append(".sp19");
-            cout << fileName << endl;
-            cout << "after append" << endl;
 
 	    fileToRead.open(fileName.c_str());
-	    cout << "after fileToRead.open()" << endl; 
             outFileNameBase = argv[1];
-            cout << "after outFileNameBase" << endl;
             break;
             
         default:
